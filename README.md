@@ -4,6 +4,18 @@ DSH（DeepSeek Harness）的用量仪表盘插件：从真实的会话投影缓�
 
 界面按官方「会话统计」宣传片的工作台排版复刻，单页滚动，无第三方依赖。
 
+## 安装
+
+把仓库地址发给 DSH 里的助手，说「装这个插件」：
+
+```
+github:Stopning/dsh-usage-stats
+```
+
+助手会走 bundle 机制安装并自动排期重启。装好后侧栏出现「会话与用量」，位于「插件」与「自动化任务」之间。
+
+> 别手改 profile 的 `package.json` 或 `cordis.patch.yml`，也别拷进 `node_modules` 手动改 —— 那样升级会丢。
+
 ![面板截图](docs/screenshot.png)
 
 ---
@@ -52,24 +64,28 @@ DSH（DeepSeek Harness）的用量仪表盘插件：从真实的会话投影缓�
 
 ---
 
-## 安装
+## 安装细节
 
 插件通过 DSH 的 bundle 机制安装，**不要手改 profile 的 `package.json` 或 `cordis.patch.yml`**。
 
-在 DSH 里对助手说：
+对助手说「装这个插件」，或直接指定来源：
 
-> 把这个本地插件装一下：`/path/to/dsh-usage-stats`
-
-助手会走 `plugin_manager` 的 `install_bundle`。手动情形下：
-
-```bash
-# 从本地路径安装
-plugin_manager{ action: "install_bundle", target: "/path/to/dsh-usage-stats" }
+```
+github:Stopning/dsh-usage-stats          # 从 GitHub
+/path/to/dsh-usage-stats                 # 从本地路径
 ```
 
-装好后侧栏会出现「会话与用量」，位置在「插件」与「自动化任务」之间（`order: 5`）。
+底层走的是 `plugin_manager` 的 `install_bundle`：
 
-修改 `client.js` 只需**刷新页面**即可生效（客户端 bundle 的 revision 由文件 mtime + size 决定）；修改 `index.js` 需要重启宿主。
+```bash
+plugin_manager{ action: "install_bundle", target: "github:Stopning/dsh-usage-stats" }
+```
+
+生效方式：
+
+- 修改 `client.js` → **刷新页面**即可（客户端 bundle 的 revision 由文件 mtime + size 算出）；
+- 修改 `index.js` → **重启宿主**。可排队等空闲重启：`~/.dsh/bin/dsh-restart-idle`。
+
 
 ---
 
