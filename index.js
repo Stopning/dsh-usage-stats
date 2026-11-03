@@ -82,7 +82,7 @@ export const Config = defineConfig({
 const NS = 'dsh-usage-stats'
 const CACHE_TTL_MS = 15_000
 const PRICE_TTL_MS = 60_000
-const CPU_SAMPLE_MS = 2_000
+const CPU_SAMPLE_MS = 5_000
 const CPU_HISTORY = 60
 
 /* ------------------------------------------------------------------ utils */

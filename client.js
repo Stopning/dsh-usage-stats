@@ -646,7 +646,7 @@ window.__ModuleLoader__.load({
         h('div', { className: 'ust-card' },
           h(Section, {
             title: t('runtimeTitle'),
-            badge: t('live', { n: Math.round((cpu?.sampleIntervalMs ?? 2000) / 1000) }),
+            badge: t('live', { n: Math.round((cpu?.sampleIntervalMs ?? 5000) / 1000) }),
             right: cpu ? t('cores', { n: cpu.current?.cores ?? 0, v: (cpu.current?.load1 ?? 0).toFixed(2) }) : undefined,
           }),
           h('div', { className: 'ust-metric' },
@@ -912,7 +912,7 @@ window.__ModuleLoader__.load({
       useEffect(() => {
         timerRef.current = setInterval(() => {
           post('cpu', {}).then((value) => setCpu(value)).catch(() => {})
-        }, 3000)
+        }, 5000)
         return () => clearInterval(timerRef.current)
       }, [])
 

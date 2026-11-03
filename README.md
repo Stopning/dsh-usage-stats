@@ -19,7 +19,7 @@ DSH（DeepSeek Harness）的用量仪表盘插件：从真实的会话投影缓�
 | 会话数 | 范围内会话总量，副标给出平均每会话 token |
 | 缓存命中率 | `cacheRead / (cacheRead + uncached)`，副标为缓存读取总量 |
 
-**DSH 运行状态**（每 5 秒采样）
+**DSH 运行状态**（每 5 秒采样，与官方一致；`CPU_HISTORY = 60` 个点正好铺满最近 5 分钟）
 
 - CPU（单核）百分比 + 整机负载 + 核数
 - 内存 RSS + V8 堆已用 / 堆总量
