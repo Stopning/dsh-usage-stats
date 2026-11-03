@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "会话与用量",
+    "description": "统计 DSH 各会话的 token 消耗、估算成本、月度预算与宿主进程 CPU 占用。"
+  }
+}
