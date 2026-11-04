@@ -89,6 +89,7 @@ window.__ModuleLoader__.load({
       budgetTitle: '月度预算',
       budgetUsed: '{used} / {amount}',
       budgetRemaining: '剩余 {n}',
+      budgetSpent: '已用 {n}',
       over: '已超支',
       budgetMonth: '{month}',
       budgetEdit: '编辑预算',
@@ -162,6 +163,7 @@ window.__ModuleLoader__.load({
       budgetTitle: 'Monthly budget',
       budgetUsed: '{used} / {amount}',
       budgetRemaining: '{n} left',
+      budgetSpent: '{n} spent',
       over: 'Over budget',
       budgetMonth: '{month}',
       budgetEdit: 'Edit budget',
@@ -246,7 +248,7 @@ window.__ModuleLoader__.load({
     /* ------------------------------------------------------------ styles */
 
     const STYLE = `
-.ust-root { --ust-whale-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22377%22 height=%22277%22 viewBox=%2267 116 377 277%22%3E%3Cpath fill=%22%23000%22 fill-rule=%22nonzero%22 d=%22M440.898 139.167c-4.001-1.961-5.723 1.776-8.062 3.673-.801.612-1.479 1.407-2.154 2.141-5.848 6.246-12.681 10.349-21.607 9.859-13.048-.734-24.192 3.368-34.04 13.348-2.093-12.307-9.048-19.658-19.635-24.37-5.54-2.449-11.141-4.9-15.02-10.227-2.708-3.795-3.447-8.021-4.801-12.185-.861-2.509-1.725-5.082-4.618-5.512-3.139-.49-4.372 2.142-5.601 4.349-4.925 9.002-6.833 18.921-6.647 28.962.432 22.597 9.972 40.597 28.932 53.397 2.154 1.47 2.707 2.939 2.032 5.082-1.293 4.41-2.832 8.695-4.186 13.105-.862 2.817-2.157 3.429-5.172 2.205-10.402-4.346-19.391-10.778-27.332-18.553-13.481-13.044-25.668-27.434-40.873-38.702a177.614 177.614 0 00-10.834-7.409c-15.512-15.063 2.032-27.434 6.094-28.902 4.247-1.532 1.478-6.797-12.251-6.736-13.727.061-26.285 4.653-42.288 10.777-2.34.92-4.801 1.593-7.326 2.142-14.527-2.756-29.608-3.368-45.367-1.593-29.671 3.305-53.368 17.329-70.788 41.272-20.928 28.785-25.854 61.482-19.821 95.59 6.34 35.943 24.683 65.704 52.876 88.974 29.239 24.123 62.911 35.943 101.32 33.677 23.329-1.346 49.307-4.468 78.607-29.27 7.387 3.673 15.142 5.144 28.008 6.246 9.911.92 19.452-.49 26.839-2.019 11.573-2.449 10.773-13.166 6.586-15.124-33.915-15.797-26.47-9.368-33.24-14.573 17.235-20.39 43.213-41.577 53.369-110.222.8-5.448.121-8.877 0-13.287-.061-2.692.553-3.734 3.632-4.041 8.494-.981 16.742-3.305 24.314-7.471 21.975-12.002 30.84-31.719 32.933-55.355.307-3.612-.061-7.348-3.879-9.245v-.003zM249.4 351.89c-32.872-25.838-48.814-34.352-55.4-33.984-6.155.368-5.048 7.41-3.694 12.002 1.415 4.532 3.264 7.654 5.848 11.634 1.785 2.634 3.017 6.551-1.784 9.493-10.587 6.55-28.993-2.205-29.856-2.635-21.421-12.614-39.334-29.269-51.954-52.047-12.187-21.924-19.267-45.435-20.435-70.542-.308-6.061 1.478-8.207 7.509-9.307 7.94-1.471 16.127-1.778 24.068-.615 33.547 4.9 62.108 19.902 86.054 43.66 13.666 13.531 24.007 29.699 34.658 45.496 11.326 16.778 23.514 32.761 39.026 45.865 5.479 4.592 9.848 8.083 14.035 10.656-12.62 1.407-33.673 1.714-48.075-9.676zm15.899-102.519c.521-2.111 2.421-3.658 4.722-3.658a4.74 4.74 0 011.661.305c.678.246 1.293.614 1.786 1.163.861.859 1.354 2.083 1.354 3.368 0 2.695-2.154 4.837-4.862 4.837a4.748 4.748 0 01-4.738-4.034 5.01 5.01 0 01.077-1.981zm47.208 26.915c-2.606.996-5.2 1.778-7.707 1.88-4.679.244-9.787-1.654-12.556-3.981-4.308-3.612-7.386-5.631-8.679-11.941-.554-2.695-.247-6.858.246-9.246 1.108-5.144-.124-8.451-3.754-11.451-2.954-2.449-6.711-3.122-10.834-3.122-1.539 0-2.954-.673-4.001-1.224-1.724-.856-3.139-3-1.785-5.634.432-.856 2.525-2.939 3.018-3.305 5.6-3.185 12.065-2.144 18.034.244 5.54 2.266 9.727 6.429 15.759 12.307 6.155 7.102 7.263 9.063 10.773 14.39 2.771 4.163 5.294 8.451 7.018 13.348.877 2.561.071 4.74-2.341 6.277-.981.625-2.109 1.044-3.191 1.458z%22/%3E%3C/svg%3E"); --ust-brand: #31BD9D; --ust-ok: #31BD9D; --ust-warn: #E0B23C; --ust-high: #F08A24; --ust-danger: #E2453C; display: flex; flex-direction: column; gap: 18px; padding: 18px 20px 28px; color: var(--dsw-alias-label-primary); flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+.ust-root { --ust-whale-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22377%22 height=%22277%22 viewBox=%2267 116 377 277%22%3E%3Cpath fill=%22%23000%22 fill-rule=%22nonzero%22 d=%22M440.898 139.167c-4.001-1.961-5.723 1.776-8.062 3.673-.801.612-1.479 1.407-2.154 2.141-5.848 6.246-12.681 10.349-21.607 9.859-13.048-.734-24.192 3.368-34.04 13.348-2.093-12.307-9.048-19.658-19.635-24.37-5.54-2.449-11.141-4.9-15.02-10.227-2.708-3.795-3.447-8.021-4.801-12.185-.861-2.509-1.725-5.082-4.618-5.512-3.139-.49-4.372 2.142-5.601 4.349-4.925 9.002-6.833 18.921-6.647 28.962.432 22.597 9.972 40.597 28.932 53.397 2.154 1.47 2.707 2.939 2.032 5.082-1.293 4.41-2.832 8.695-4.186 13.105-.862 2.817-2.157 3.429-5.172 2.205-10.402-4.346-19.391-10.778-27.332-18.553-13.481-13.044-25.668-27.434-40.873-38.702a177.614 177.614 0 00-10.834-7.409c-15.512-15.063 2.032-27.434 6.094-28.902 4.247-1.532 1.478-6.797-12.251-6.736-13.727.061-26.285 4.653-42.288 10.777-2.34.92-4.801 1.593-7.326 2.142-14.527-2.756-29.608-3.368-45.367-1.593-29.671 3.305-53.368 17.329-70.788 41.272-20.928 28.785-25.854 61.482-19.821 95.59 6.34 35.943 24.683 65.704 52.876 88.974 29.239 24.123 62.911 35.943 101.32 33.677 23.329-1.346 49.307-4.468 78.607-29.27 7.387 3.673 15.142 5.144 28.008 6.246 9.911.92 19.452-.49 26.839-2.019 11.573-2.449 10.773-13.166 6.586-15.124-33.915-15.797-26.47-9.368-33.24-14.573 17.235-20.39 43.213-41.577 53.369-110.222.8-5.448.121-8.877 0-13.287-.061-2.692.553-3.734 3.632-4.041 8.494-.981 16.742-3.305 24.314-7.471 21.975-12.002 30.84-31.719 32.933-55.355.307-3.612-.061-7.348-3.879-9.245v-.003zM249.4 351.89c-32.872-25.838-48.814-34.352-55.4-33.984-6.155.368-5.048 7.41-3.694 12.002 1.415 4.532 3.264 7.654 5.848 11.634 1.785 2.634 3.017 6.551-1.784 9.493-10.587 6.55-28.993-2.205-29.856-2.635-21.421-12.614-39.334-29.269-51.954-52.047-12.187-21.924-19.267-45.435-20.435-70.542-.308-6.061 1.478-8.207 7.509-9.307 7.94-1.471 16.127-1.778 24.068-.615 33.547 4.9 62.108 19.902 86.054 43.66 13.666 13.531 24.007 29.699 34.658 45.496 11.326 16.778 23.514 32.761 39.026 45.865 5.479 4.592 9.848 8.083 14.035 10.656-12.62 1.407-33.673 1.714-48.075-9.676zm15.899-102.519c.521-2.111 2.421-3.658 4.722-3.658a4.74 4.74 0 011.661.305c.678.246 1.293.614 1.786 1.163.861.859 1.354 2.083 1.354 3.368 0 2.695-2.154 4.837-4.862 4.837a4.748 4.748 0 01-4.738-4.034 5.01 5.01 0 01.077-1.981zm47.208 26.915c-2.606.996-5.2 1.778-7.707 1.88-4.679.244-9.787-1.654-12.556-3.981-4.308-3.612-7.386-5.631-8.679-11.941-.554-2.695-.247-6.858.246-9.246 1.108-5.144-.124-8.451-3.754-11.451-2.954-2.449-6.711-3.122-10.834-3.122-1.539 0-2.954-.673-4.001-1.224-1.724-.856-3.139-3-1.785-5.634.432-.856 2.525-2.939 3.018-3.305 5.6-3.185 12.065-2.144 18.034.244 5.54 2.266 9.727 6.429 15.759 12.307 6.155 7.102 7.263 9.063 10.773 14.39 2.771 4.163 5.294 8.451 7.018 13.348.877 2.561.071 4.74-2.341 6.277-.981.625-2.109 1.044-3.191 1.458z%22/%3E%3C/svg%3E"); --ust-brand: #31BD9D; --ust-ok: #31BD9D; --ust-warn: #E0B23C; --ust-high: #F08A24; --ust-danger: #E2453C; --ust-ink: color-mix(in srgb, var(--dsw-alias-label-primary) 92%, transparent); display: flex; flex-direction: column; gap: 18px; padding: 18px 20px 28px; color: var(--dsw-alias-label-primary); flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
 .ust-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .ust-title { font-size: 20px; font-weight: 600; letter-spacing: .2px; }
 .ust-head-right { margin-left: auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -331,12 +333,14 @@ window.__ModuleLoader__.load({
 .ust-whale-shape { position: relative; width: 100%; aspect-ratio: 160 / 118; -webkit-mask: var(--ust-whale-mask) center / contain no-repeat; mask: var(--ust-whale-mask) center / contain no-repeat; }
 .ust-whale-empty { position: absolute; inset: 0; background: color-mix(in srgb, var(--dsw-alias-label-secondary) 22%, transparent); }
 .ust-whale-fill { position: absolute; left: 0; right: 0; bottom: 0; background: var(--ust-ok); transition: height .35s ease; }
+.ust-whale[data-level='full'] .ust-whale-fill { background: var(--ust-ink); }
 .ust-whale[data-level='safe'] .ust-whale-fill { background: var(--ust-ok); }
 .ust-whale[data-level='warn'] .ust-whale-fill { background: var(--ust-warn); }
 .ust-whale[data-level='high'] .ust-whale-fill { background: var(--ust-high); }
 .ust-whale[data-level='over'] .ust-whale-fill { background: var(--ust-danger); }
 .ust-budget-side { width: 100%; min-width: 0; text-align: center; }
 .ust-budget-pct { font-size: 40px; font-weight: 700; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.ust-budget-pct[data-level='full'] { color: var(--dsw-alias-label-primary); }
 .ust-budget-pct[data-level='safe'] { color: var(--ust-ok); }
 .ust-budget-pct[data-level='warn'] { color: var(--ust-warn); }
 .ust-budget-pct[data-level='high'] { color: var(--ust-high); }
@@ -344,6 +348,8 @@ window.__ModuleLoader__.load({
 .ust-budget-sub { font-size: 14px; color: var(--dsw-alias-label-secondary); margin-top: 6px; font-variant-numeric: tabular-nums; }
 .ust-budget-left { font-size: 13px; margin-top: 4px; color: var(--dsw-alias-label-secondary); }
 .ust-budget-left[data-over='true'] { color: var(--dsw-alias-state-error-primary); }
+.ust-budget-amount-row { display: flex; align-items: center; justify-content: center; gap: 2px; margin-top: 10px; font-size: 12px; color: var(--dsw-alias-label-secondary); font-variant-numeric: tabular-nums; }
+.ust-budget-cap { white-space: nowrap; }
 .ust-budget-amount { display: inline-flex; align-items: center; gap: 4px; }
 .ust-budget-edit { appearance: none; background: transparent; border: none; padding: 0 2px; cursor: pointer; color: var(--dsw-alias-label-secondary); opacity: 0; transition: opacity .12s; line-height: 1; font-size: 12px; }
 .ust-budget-amount:hover .ust-budget-edit, .ust-budget-edit:focus-visible { opacity: 1; }
@@ -613,9 +619,17 @@ window.__ModuleLoader__.load({
       const budget = data.budget ?? {}
       const perf = data.perf ?? {}
       const over = Boolean(budget.over)
-      // spend ratio drives the bar colour; the thresholds are fixed bands
-      const ratio = Number(budget.ratio) || 0
-      const level = ratio >= 0.9 ? 'over' : ratio >= 0.6 ? 'high' : ratio >= 0.3 ? 'warn' : 'safe'
+      // The whale is a water tank, not a progress bar: it shows what is LEFT.
+      // Full at month start, drains as money is spent, goes red when nearly dry.
+      const spentRatio = Math.max(0, Number(budget.ratio) || 0)
+      const leftRatio = Math.max(0, Math.min(1, 1 - spentRatio))
+      // bands read from the remaining ratio: a nearly full tank is "untouched"
+      // (neutral ink), then green -> yellow -> orange -> red as the month drains it.
+      const level = leftRatio >= 0.95 ? 'full'
+        : leftRatio > 0.75 ? 'safe'
+        : leftRatio > 0.55 ? 'warn'
+        : leftRatio > 0.25 ? 'high'
+        : 'over'
 
       return h('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px' } },
         // KPI row
@@ -737,10 +751,16 @@ window.__ModuleLoader__.load({
             h('div', { className: 'ust-budget-body' },
               h('div', { className: 'ust-budget-side' },
                 h('div', { className: 'ust-budget-pct', 'data-level': level },
-                  formatPercent(budget.ratio)),
+                  formatPercent(leftRatio)),
                 h('div', { className: 'ust-budget-sub' },
-                  formatMoney(budget.used ?? 0, symbol),
-                  ' / ',
+                  t('budgetRemaining', { n: formatMoney(Math.max(0, (budget.amount ?? 0) - (budget.used ?? 0)), symbol) }),
+                ),
+                h('div', { className: 'ust-budget-left', 'data-over': String(over) },
+                  over
+                    ? t('over')
+                    : t('budgetSpent', { n: formatMoney(budget.used ?? 0, symbol) })),
+                h('div', { className: 'ust-budget-amount-row' },
+                  h('span', { className: 'ust-budget-cap' }, `${formatMoney(budget.used ?? 0, symbol)} / `),
                   h(BudgetAmount, {
                     t,
                     symbol,
@@ -748,14 +768,12 @@ window.__ModuleLoader__.load({
                     onSave: onSaveBudget,
                   }),
                 ),
-                h('div', { className: 'ust-budget-left', 'data-over': String(over) },
-                  over ? t('over') : t('budgetRemaining', { n: formatMoney(Math.max(0, (budget.amount ?? 0) - (budget.used ?? 0)), symbol) })),
               ),
-              // the whale is the level indicator: its colour tracks how much of the month is spent
+              // the whale is a tank: its water level is the budget still available
               h('div', { className: 'ust-whale', 'data-level': level },
                 h('div', { className: 'ust-whale-shape' },
                   h('div', { className: 'ust-whale-empty' }),
-                  h('div', { className: 'ust-whale-fill', style: { height: `${Math.max(0, Math.min(100, Math.round((budget.ratio ?? 0) * 1000) / 10))}%` } }),
+                  h('div', { className: 'ust-whale-fill', style: { height: `${Math.round(leftRatio * 1000) / 10}%` } }),
                 ),
               ),
             ),

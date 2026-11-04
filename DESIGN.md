@@ -228,13 +228,14 @@ window.__ModuleLoader__.load({ id: 'dsh-usage-stats', factory(require) {
 
 - 与「会话消耗排行」同处一行两列（`.ust-rank-budget`），左排行右预算，两卡等高。
 - **竖排布局（2026-11-04 调整）**：文字在上、鲸鱼在下，整体水平居中，避免左右挤压；鲸鱼宽 `max 210px` 居中，不再并排。
-- 鲸鱼水位：DeepSeek 鲸鱼 logo 剪影作为 CSS `mask` 施加在容器 `.ust-whale-shape` 上，内部两层绝对定位子元素——`.ust-whale-empty`（浅灰底，22% 次要前景色）铺满整只鲸鱼，`.ust-whale-fill`（`height = ratio%`，`bottom:0`）表示已用比例，颜色随档位变化（绿/黄/橙/红），形成「水位」效果。
+- 鲸鱼水位：DeepSeek 鲸鱼 logo 剪影作为 CSS `mask` 施加在容器 `.ust-whale-shape` 上，内部两层绝对定位子元素——`.ust-whale-empty`（浅灰底，22% 次要前景色）铺满整只鲸鱼，`.ust-whale-fill`（`height = 剩余比例%`，`bottom:0`）表示**预算还剩多少**，颜色随档位变化（绿/黄/橙/红），形成「水位」效果。
+  - **语义（2026-11-04 修正）**：鲸鱼是**水箱不是进度条**——水位表示**剩余**预算，不是已用。月初满水（绿），花得越多水位越低，见底时变红。旧实现用 `budget.ratio`（已用比例）填充，导致花得越多水位越高，方向反了。
   - 素材改为**矢量**：https://uxwing.com/deepseek-logo-icon/（免费商用、无需署名）的 `deepseek-logo-icon.svg`，取其鲸鱼 path（`fill-rule="nonzero"`），实测图形边界 `x 67→444, y 116→393`，故 `viewBox="67 116 377 277"`，URL-encode 后以 `url("data:image/svg+xml,…")` 内联进 `--ust-whale-mask`（约 2.9KB，无外部文件、无位图缩放模糊）。
   - 早期用 `/Applications/DeepSeek Harness.app/Contents/Resources/icon.png` 位图转遮罩（`alpha<200` 过滤 + `lum<110` 二值化 + `getbbox()` 裁剪），160px 下模糊、512px 下 base64 达 27KB，已弃用。
-- 上方：大号百分比（40px）+ 「已用 / 上限」（14px）+ 剩余额度（13px）；**进度条已移除**（颜色语义已由鲸鱼承载）。
+- 上方：大号**剩余百分比**（40px，与水位同义）+「剩余 ¥x」（14px）+「已用 ¥y」（13px）+「已用 / 上限」金额行（12px，含就地编辑铅笔）；**进度条已移除**（颜色语义已由鲸鱼承载）。
 - 上限可就地编辑：平时显示数字 + 悬停出现的铅笔 ✎，点击变输入框，Enter / 保存按钮提交，Esc / 取消按钮放弃；保存后立即重算并刷新数据，刷新页面仍保留。
-- 数值存插件私有文件 `~/.dsh/storages/dsh-usage-stats/budget.json`（`{amount, updatedAt}`），优先于配置项 `budgetAmount`；不动 profile 配置，改完无需重启。
-- 四档阈值：<30% 绿 `#31BD9D`、30–60% 黄 `#E0B23C`、60–90% 橙 `#F08A24`、≥90% 红 `#E2453C`（`data-level` 属性 + `--ust-ok/warn/high/danger`）。
+- 数值存插件私有文件 `~/.dsh/storages/dsh-usage-stats/budget.json`（`{amount, updatedAt}`），优先于配置项 `budgetAmount`；不动 profile 配置，改完无需重启。**注意：必须走 `POST /api/dsh-usage-stats/budget` 改，直接写文件不生效**（宿主内存里的 `settings.budgetAmount` 才是权威值）。
+- 五档阈值按**剩余**比例（2026-11-04 定稿）：**≥95%（月初未动）黑** `--ust-ink`（`label-primary` 92%）→ **95–75% 绿** `#31BD9D` → **75–55% 黄** `#E0B23C` → **55–25% 橙** `#F08A24` → **<25% 红** `#E2453C`。`data-level` 依次为 `full / safe / warn / high / over`，同时作用于鲸鱼水位填充与上方大号百分比。
 
 ### 4.6 会话消耗排行（与 4.5 并排，各占一半）
 
