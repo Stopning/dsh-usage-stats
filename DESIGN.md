@@ -242,6 +242,7 @@ window.__ModuleLoader__.load({ id: 'dsh-usage-stats', factory(require) {
 - 半宽卡片：序号方块 + 标题 + 模型副标 + 右侧主副两个数字，右上三档胶囊：按 Token / 按花费 / 按耗时，取前 8。
 - 显示内容随排序档位联动（2026-11-04 修正：原先只换排序、显示恒为 tokens+金额）：按 Token → 主 tokens / 副金额；按花费 → 主金额 / 副 tokens；按耗时 → 主耗时（wallMs）/ 副轮次。
 - 「按耗时」用范围内每日桶的 wallMs 累加（会话页 entry 透传 `durationMs` / `turns`），不再用会话终生轮次排序。
+- 时长单位用完整写法（2026-11-05 修正）：`formatMs` / `formatDuration` 一律输出 `5.9 h` / `56.3 min` / `3.1 s` / `35 min 23 s` / `37 ms`，单位文案走 locale 键 `unitDayHour` / `unitHourMin` / `unitMinSec` / `unitHour` / `unitMinute` / `unitSecond` / `unitMs`。原先裸写 `112.7m` 会被读成「112.7 百万 token」（`m` 与 `M` 同形）。
 
 ### 4.7 Token 构成 + 对话性能（两列，置于最底）
 
