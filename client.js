@@ -98,6 +98,13 @@ window.__ModuleLoader__.load({
       budgetInvalid: '请输入不小于 0 的数字',
       estimated: '估算',
       estimatedHint: '部分模型未命中价目表，已按默认价估算',
+      unitDayHour: '{d} 天 {h} 小时',
+      unitHourMin: '{h} 小时 {m} 分钟',
+      unitMinSec: '{m} 分 {s} 秒',
+      unitHour: '{n} 小时',
+      unitMinute: '{n} 分钟',
+      unitSecond: '{n} 秒',
+      unitMs: '{n} 毫秒',
       refresh: '刷新',
       loading: '加载中…',
       loadError: '加载失败',
@@ -172,6 +179,13 @@ window.__ModuleLoader__.load({
       budgetInvalid: 'Enter a number of 0 or more',
       estimated: 'estimated',
       estimatedHint: 'Some models missed the price table and were priced with defaults',
+      unitDayHour: '{d} days {h} h',
+      unitHourMin: '{h} h {m} min',
+      unitMinSec: '{m} min {s} s',
+      unitHour: '{n} h',
+      unitMinute: '{n} min',
+      unitSecond: '{n} s',
+      unitMs: '{n} ms',
       refresh: 'Refresh',
       loading: 'Loading…',
       loadError: 'Failed to load',
@@ -224,21 +238,23 @@ window.__ModuleLoader__.load({
       return `${n} B`
     }
 
-    function formatDuration(seconds) {
+    function formatDuration(seconds, t) {
       const s = Math.max(0, Math.floor(seconds || 0))
       const d = Math.floor(s / 86400)
       const hrs = Math.floor((s % 86400) / 3600)
       const min = Math.floor((s % 3600) / 60)
-      if (d > 0) return `${d}d ${hrs}h`
-      if (hrs > 0) return `${hrs}h ${min}m`
-      return `${min}m ${s % 60}s`
+      if (d > 0) return t('unitDayHour', { d, h: hrs })
+      if (hrs > 0) return t('unitHourMin', { h: hrs, m: min })
+      return t('unitMinSec', { m: min, s: s % 60 })
     }
 
-    function formatMs(ms) {
+    /** Spelled-out units: a bare "m" reads as "M" (million tokens). */
+    function formatMs(ms, t) {
       const n = Number(ms) || 0
-      if (n >= 60_000) return `${(n / 60_000).toFixed(1)}m`
-      if (n >= 1_000) return `${(n / 1_000).toFixed(1)}s`
-      return `${Math.round(n)}ms`
+      if (n >= 3_600_000) return t('unitHour', { n: (n / 3_600_000).toFixed(1) })
+      if (n >= 60_000) return t('unitMinute', { n: (n / 60_000).toFixed(1) })
+      if (n >= 1_000) return t('unitSecond', { n: (n / 1_000).toFixed(1) })
+      return t('unitMs', { n: Math.round(n) })
     }
 
     function formatPercent(ratio) {
@@ -676,12 +692,12 @@ window.__ModuleLoader__.load({
             ),
             h('div', null,
               h('div', { className: 'ust-metric-label' }, t('eventLoop')),
-              h('div', { className: 'ust-metric-value' }, cpu ? formatMs(cpu.current?.eventLoopP99 ?? 0) : '—'),
-              h('div', { className: 'ust-metric-sub' }, cpu ? t('loopMean', { v: formatMs(cpu.current?.eventLoopMean ?? 0) }) : '—'),
+              h('div', { className: 'ust-metric-value' }, cpu ? formatMs(cpu.current?.eventLoopP99 ?? 0, t) : '—'),
+              h('div', { className: 'ust-metric-sub' }, cpu ? t('loopMean', { v: formatMs(cpu.current?.eventLoopMean ?? 0, t) }) : '—'),
             ),
             h('div', null,
               h('div', { className: 'ust-metric-label' }, t('uptime')),
-              h('div', { className: 'ust-metric-value' }, formatDuration(cpu?.current?.uptimeSec ?? 0)),
+              h('div', { className: 'ust-metric-value' }, formatDuration(cpu?.current?.uptimeSec ?? 0, t)),
               h('div', { className: 'ust-metric-sub' }, cpu ? `PID ${cpu.current?.pid ?? '—'} · Node ${cpu.current?.nodeVersion ?? '—'}` : '—'),
             ),
           ),
@@ -791,12 +807,12 @@ window.__ModuleLoader__.load({
             h('div', { className: 'ust-perf-grid' },
               h('div', null,
                 h('div', { className: 'ust-perf-label' }, t('avgTurn')),
-                h('div', { className: 'ust-perf-value' }, formatMs(perf.avgTurnMs ?? 0)),
+                h('div', { className: 'ust-perf-value' }, formatMs(perf.avgTurnMs ?? 0, t)),
                 h('div', { className: 'ust-perf-sub' }, t('turns', { n: perf.turns ?? 0 })),
               ),
               h('div', null,
                 h('div', { className: 'ust-perf-label' }, t('avgTtft')),
-                h('div', { className: 'ust-perf-value' }, formatMs(perf.avgTtftMs ?? 0)),
+                h('div', { className: 'ust-perf-value' }, formatMs(perf.avgTtftMs ?? 0, t)),
                 h('div', { className: 'ust-perf-sub' }, t('ttftHint')),
               ),
               h('div', null,
@@ -848,7 +864,7 @@ window.__ModuleLoader__.load({
       const figures = (s) => {
         if (rankBy === 'duration') {
           return {
-            main: formatMs(s.durationMs ?? 0),
+            main: formatMs(s.durationMs ?? 0, t),
             sub: t('turns', { n: s.turns ?? 0 }),
           }
         }
