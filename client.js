@@ -66,6 +66,8 @@ window.__ModuleLoader__.load({
       peak: '峰值 {v}',
       dailyTitle: '每日消耗',
       dailySub: '按 token 堆叠 · {range}',
+      dailySubWeek: '按 token 堆叠 · {range} · 每周',
+      dailySubMonth: '按 token 堆叠 · {range} · 每月',
       composition: 'Token 构成',
       legendUncached: '输入（未命中）',
       legendCacheRead: '缓存读取',
@@ -147,6 +149,8 @@ window.__ModuleLoader__.load({
       peak: 'Peak {v}',
       dailyTitle: 'Daily usage',
       dailySub: 'Stacked by token · {range}',
+      dailySubWeek: 'Stacked by token · {range} · weekly',
+      dailySubMonth: 'Stacked by token · {range} · monthly',
       composition: 'Token composition',
       legendUncached: 'Input (uncached)',
       legendCacheRead: 'Cache read',
@@ -299,11 +303,21 @@ window.__ModuleLoader__.load({
 .ust-metric-sub { font-size: 11px; color: var(--dsw-alias-label-secondary); margin-top: 3px; }
 .ust-spark { display: flex; align-items: flex-end; gap: 2px; height: 72px; margin-top: 16px; }
 .ust-spark-bar { flex: 1; background: var(--ust-brand); border-radius: 1px; min-height: 1px; opacity: .85; }
-.ust-bars { display: flex; align-items: flex-end; gap: 6px; height: 190px; padding-top: 10px; }
-.ust-bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; gap: 5px; }
+.ust-bars { display: flex; align-items: flex-end; gap: 6px; height: 190px; padding-top: 10px; min-width: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
+/* min-width:0 is the fix: without it the nowrap date label sets a min-content
+   floor and flex cannot shrink, so the last bars get pushed out of the card. */
+.ust-bar-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; gap: 5px; }
 .ust-bar-stack { width: 100%; max-width: 42px; display: flex; flex-direction: column; justify-content: flex-end; gap: 1px; }
 .ust-bar-seg { width: 100%; min-height: 1px; }
-.ust-bar-label { font-size: 10px; color: var(--dsw-alias-label-secondary); white-space: nowrap; }
+.ust-bar-label { font-size: 10px; color: var(--dsw-alias-label-secondary); white-space: nowrap; overflow: hidden; text-overflow: clip; max-width: 100%; }
+.ust-bars-dense .ust-bar-label { font-size: 9px; letter-spacing: -.2px; }
+/* Only every other label is drawn, so each one may spill into the hidden
+   neighbour's column instead of being clipped to a single bar's width. */
+.ust-bars-dense .ust-bar-label { max-width: none; overflow: visible; }
+/* Unclipped labels spill sideways; give the first and last one room so the
+   scroll container does not crop them. */
+.ust-bars-dense { padding-left: 14px; padding-right: 14px; }
+.ust-bars-dense .ust-bar-col:nth-child(even) .ust-bar-label { visibility: hidden; }
 .ust-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; }
 .ust-legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--dsw-alias-label-secondary); }
 .ust-legend-dot { width: 9px; height: 9px; border-radius: 2px; }
@@ -436,10 +450,27 @@ window.__ModuleLoader__.load({
     }
 
     /** Stacked daily bars: uncached / cache read / cache write / output. */
+    /**
+     * Axis label for one bucket. Day buckets are `2026-11-05`, week buckets
+     * `W 2026-11-03` (the Monday), month buckets `2026-11`.
+     */
+    function barLabel(date) {
+      if (typeof date !== 'string') return ''
+      if (date.startsWith('W ')) return date.slice(7)
+      if (date.length === 7) return date.slice(2).replace('-', '/')
+      return date.slice(5)
+    }
+
     function DailyBars({ days }) {
       if (!days || days.length === 0) return h('div', { className: 'ust-muted' }, '—')
       const max = Math.max(...days.map((d) => d.tokens || 0), 1)
-      return h('div', { className: 'ust-bars' },
+      // A long series still needs a floor: 3px keeps every bar visible instead
+      // of collapsing to a hairline when the panel is narrow.
+      const dense = days.length > 16
+      return h('div', {
+        className: dense ? 'ust-bars ust-bars-dense' : 'ust-bars',
+        style: { gap: days.length > 24 ? '2px' : '6px' },
+      },
         days.map((d) => {
           const total = d.tokens || 0
           const segs = [
@@ -456,7 +487,7 @@ window.__ModuleLoader__.load({
                 style: { height: `${(s.value / total) * 100}%`, background: s.color },
               })),
             ),
-            h('div', { className: 'ust-bar-label' }, d.date.slice(5)),
+            h('div', { className: 'ust-bar-label' }, barLabel(d.date)),
           )
         }),
       )
@@ -988,7 +1019,14 @@ window.__ModuleLoader__.load({
           rankBy,
           setRankBy,
           onSaveBudget: saveBudget,
-          dailySub: t('dailySub', { range: rangeLabel(range) }),
+          dailySub: t(
+            overview?.timelineUnit === 'week'
+              ? 'dailySubWeek'
+              : overview?.timelineUnit === 'month'
+                ? 'dailySubMonth'
+                : 'dailySub',
+            { range: rangeLabel(range) },
+          ),
         }),
       )
     }

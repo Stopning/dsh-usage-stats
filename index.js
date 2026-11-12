@@ -443,6 +443,50 @@ export function apply(ctx, config) {
     return Number.isFinite(ts) ? ts >= from : true
   }
 
+  /** Coarsest unit that keeps the series readable in one row of bars. */
+  const MAX_BARS = 32
+
+  function bucketKey(date, unit) {
+    if (unit === 'day') return date
+    if (unit === 'week') {
+      // ISO-ish week of the month is not meaningful across months, so anchor
+      // on the Monday of the week instead: "W 2026-11-03".
+      const ts = Date.parse(`${date}T00:00:00Z`)
+      if (!Number.isFinite(ts)) return date
+      const dow = new Date(ts).getUTCDay() || 7
+      const monday = new Date(ts - (dow - 1) * 86_400_000)
+      return `W ${monday.toISOString().slice(0, 10)}`
+    }
+    return date.slice(0, 7)
+  }
+
+  /**
+   * Fold a per-day series into at most MAX_BARS bars. A long "all" range can
+   * span months; drawing one bar per day squeezes every bar to sub-pixel width,
+   * so aggregate by week, then by month, until the series fits.
+   */
+  function foldTimeline(timeline) {
+    if (timeline.length <= MAX_BARS) return { unit: 'day', days: timeline }
+    for (const unit of ['week', 'month']) {
+      const buckets = new Map()
+      for (const d of timeline) {
+        const key = bucketKey(d.date, unit)
+        const cur = buckets.get(key)
+        if (!cur) {
+          buckets.set(key, { ...d, date: key })
+          continue
+        }
+        for (const field of ['uncached', 'output', 'cacheRead', 'cacheWrite', 'tokens', 'costUsd']) {
+          cur[field] = (cur[field] ?? 0) + (d[field] ?? 0)
+        }
+      }
+      if (buckets.size <= MAX_BARS || unit === 'month') {
+        return { unit, days: [...buckets.values()] }
+      }
+    }
+    return { unit: 'month', days: timeline }
+  }
+
   async function buildOverview(range, currencyOverride) {
     const [sessions, priceInfo] = await Promise.all([getSessions(), getPrices()])
     const from = rangeStart(range, Date.now())
@@ -578,6 +622,8 @@ export function apply(ctx, config) {
 
     const timeline = [...byDay.values()].sort((a, b) => (a.date < b.date ? -1 : 1))
     const totalCostUsd = timeline.reduce((sum, b) => sum + b.costUsd, 0)
+    // Long ranges fold to weeks/months so the bars keep a readable width.
+    const folded = foldTimeline(timeline)
 
     // monthly budget: current calendar month, computed over ALL sessions
     // (independent of the selected display range)
@@ -637,7 +683,8 @@ export function apply(ctx, config) {
         monthTokens,
         monthCostUsd,
       },
-      timeline,
+      timeline: folded.days,
+      timelineUnit: folded.unit,
       models: [...byModel.values()]
         .sort((a, b) => b.tokens - a.tokens)
         .map((m) => ({ ...m, costDisplay: toDisplay(m.costUsd) })),
